@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string.h>
 #include <cctype>
+#include <iomanip>
  
 using namespace std;
 
@@ -14,11 +15,23 @@ class Student {
 
 public:
     void getData() {
+        cout << "Enter your full name: ";
+
+        cin.getline (name, 40);
+        
+        cout << "Enter your roll number: ";
+        cin >> roll_no ;
+        cout << "Enter your Faculty: ";
+        cin >> faculty;
+        cout << " Enter your Grade: ";
+        cin >> grade;
+        cout << "Enter Phone number:";
+        cin >> phone_no;
 
     }
 
     void display() {
-
+        cout << setw(22) << setiosflags(ios::left) << name << setw(12) << setiosflags(ios::left)<< roll_no <<setiosflags(ios::left)<< setw(8) << faculty <<setiosflags(ios::left) << setw(5) <<setiosflags(ios::left)<< grade << setw(15) <<phone_no;
     }
 };
 
