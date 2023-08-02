@@ -16,15 +16,17 @@ class Student {
 public:
     void getData() {
         cout << "Enter your full name: ";
-
         cin.getline (name, 40);
         
         cout << "Enter your roll number: ";
         cin >> roll_no ;
+
         cout << "Enter your Faculty: ";
         cin >> faculty;
+
         cout << " Enter your Grade: ";
         cin >> grade;
+
         cout << "Enter Phone number:";
         cin >> phone_no;
 
@@ -32,6 +34,10 @@ public:
 
     void display() {
         cout << setw(22) << setiosflags(ios::left) << name << setw(12) << setiosflags(ios::left)<< roll_no <<setiosflags(ios::left)<< setw(8) << faculty <<setiosflags(ios::left) << setw(5) <<setiosflags(ios::left)<< grade << setw(15) <<phone_no;
+    }
+
+    char* getRoll() {
+        return roll_no;
     }
 };
 
@@ -110,13 +116,22 @@ int main(int argc, char* argv[])
 
 void addUser(char *file_name) {
     //TODO: add a single students data to the file
-    Student s;
+    Student s, tempS;
     
     cout << "\nEnter the Student's info: " << endl;
     s.getData();
 
-    ofstream file;
-    file.open(file_name);
+    fstream file;
+    file.open(file_name, ios::in | ios::out | ios::app);
+
+    int endposition = file.tellp();
+    if (endposition != 0) {
+        while(file.read((char*)&tempS, sizeof(tempS))) {
+            if (strcmp(tempS.getRoll(), s.getRoll()) == 0) {
+                cout << ""
+            }
+        }
+    }
 }
 
 void modifyUser(char *file_name) {
