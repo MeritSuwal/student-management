@@ -15,6 +15,7 @@ class Student {
 
 public:
     void getData() {
+        cin.ignore();
         cout << "Enter your full name: ";
         cin.getline (name, 40);
         
@@ -24,7 +25,7 @@ public:
         cout << "Enter your Faculty: ";
         cin >> faculty;
 
-        cout << " Enter your Grade: ";
+        cout << "Enter your Grade: ";
         cin >> grade;
 
         cout << "Enter Phone number:";
@@ -128,10 +129,13 @@ void addUser(char *file_name) {
     if (endposition != 0) {
         while(file.read((char*)&tempS, sizeof(tempS))) {
             if (strcmp(tempS.getRoll(), s.getRoll()) == 0) {
-                cout << ""
+                cout << "This Roll Number already exists in the DataBase!" << endl;
+                return;
             }
         }
     }
+
+    file.write((char*)&s, sizeof(s));
 }
 
 void modifyUser(char *file_name) {
