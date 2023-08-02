@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
-#include <cctype>
 #include <iomanip>
  
 using namespace std;
@@ -12,6 +11,7 @@ class Student {
     char faculty[15];
     char grade;
     char phone_no[11];
+    float marks;
 
 public:
     void getData() {
@@ -25,16 +25,31 @@ public:
         cout << "Enter your Faculty: ";
         cin >> faculty;
 
-        cout << "Enter your Grade: ";
-        cin >> grade;
-
         cout << "Enter Phone number:";
         cin >> phone_no;
 
+        cout << "Enter marks secured: ";
+        cin >> marks;
+
+        if (marks >= 75)
+            grade = 'A';
+        else if (marks >= 65)
+            grade = 'B';
+        else if (marks >= 50)
+            grade = 'C';
+        else if (marks >= 40)
+            grade = 'D';
+        else 
+            grade = 'F';
     }
 
     void display() {
-        cout << setw(22) << setiosflags(ios::left) << name << setw(12) << setiosflags(ios::left)<< roll_no <<setiosflags(ios::left)<< setw(8) << faculty <<setiosflags(ios::left) << setw(5) <<setiosflags(ios::left)<< grade << setw(15) <<phone_no;
+        cout << left << setw(40) << name;
+        cout << left << setw(13) << roll_no;
+        cout << left << setw(15) << faculty;
+        cout << left << setprecision(2) << setw(6) << marks;
+        cout << left << setw(6) << grade;
+        cout << left << setw(12) << phone_no << endl;
     }
 
     char* getRoll() {
@@ -124,6 +139,10 @@ void addUser(char *file_name) {
     fstream file;
     file.open(file_name, ios::in | ios::out | ios::app);
 
+    if (file.fail()) {
+        cout << "\nError opening the give file." << endl;
+    }
+
     //IF file already exists, check whether the entry with that specific username exists or not
     bool found = false;
     file.seekg(0, ios::end);
@@ -132,7 +151,7 @@ void addUser(char *file_name) {
         file.seekg(0);
         while(file.read((char*)&tempS, sizeof(tempS))) {
             if (strcmp(tempS.getRoll(), s.getRoll()) == 0) {
-                cout << "This Roll Number already exists in the DataBase!" << endl;
+                cout << "\nThis Roll Number already exists in the DataBase!" << endl;
                 found = true; //entry with the same roll. no already exists!
                 file.close();
                 return;
@@ -152,24 +171,64 @@ void modifyUser(char *file_name) {
 }
 
 void deleteUser(char *file_name) {
-    //TODO: delete a studnet's data, given: students' roll no
+    //fin to read the file_name.txt, fout to write the data of file_name.txt except that particular entry
+    fstream fin, fout;
+    Student s;
+
+    if (fin.fail() || fout.fail()) {
+        cout << "\nError opening the give file." << endl;
+    }
+
+    char roll_no[13];
+    //check whether the roll no. is in database or not
+    bool flag = false;
+
+    cout << "\nEnter the Roll.No. whose entry is to be deleted: " << endl;
+    cin >> roll_no;
+
+    fin.open(file_name, ios::in);
+    fout.open("temp.txt", ios::out);
+
+    while(fin.read((char*)&s, sizeof(s))) {
+        if (strcmp(s.getRoll(), roll_no) == 0)
+            //the entry exists and we dont fout.write for this s object
+            flag = true;
+        else
+            fout.write((char*)&s, sizeof(s));
+    }
+
+    if (!flag)
+        cout << "\nEntry not found!" << endl;
+    else 
+        cout << "\nRecord Deleted!" << endl;
+
+    fout.close();
+    fin.close();
+
+    remove(file_name);
+    rename("temp.txt", file_name);
 }
 
 void displayID(char *file_name) {
     Student s;
     bool match = false;
-    char r_no[12];
+    //roll no. provided by the user
+    char r_no[13];
 
-    cout << "Enter student's roll no: ";
+    cout << "\nEnter student's roll no: ";
     cin >> r_no;
 
     fstream file;
     file.open(file_name, ios::in);
 
+    if (file.fail()) {
+        cout << "\nError opening the give file." << endl;
+    }
+
     while (!file.eof()){
         file.read((char*)&s, sizeof(s));
         if (strcmp(s.getRoll(), r_no) == 0){
-            cout << "RECORD FOUND!\n";
+            cout << "\nRECORD FOUND!\n";
             s.display();
             match = true;
             break;
@@ -177,11 +236,41 @@ void displayID(char *file_name) {
     }
 
     if (!match)
-        cout << "\n Record for " << r_no << "was not found." << endl;
+        cout << "\n Record for Roll No. \"" << r_no << "\" was not found." << endl;
 
     file.close();
 }
 
 void displayAll(char *file_name) {
     //TODO: display each and every entry for that subject, in proper formatted manner
+    Student s;
+
+    ifstream file;
+    file.open(file_name);
+
+    if (file.fail()) {
+        cout << "\nError opening the give file." << endl;
+    }
+
+    file.seekg(0, ios::end);
+    if (file.tellg() == 0) {
+        cout << "\nThe DataBase is currently empty." << endl;
+        return;
+    }
+
+    //Header
+    cout << left << setw(40) << "Name";
+    cout << left << setw(13) << "Roll No.";
+    cout << left << setw(15) << "Faculty";
+    cout << left << setprecision(2) << setw(6) << "Marks";
+    cout << left << setw(6) << "Grade";
+    cout << left << setw(12) << "Phone No." << endl;
+
+    file.seekg(0);
+    while(file.eof() != 0) {
+        file.read((char*)&s, sizeof(s));
+        s.display();
+    }
+
+    file.close();
 }
