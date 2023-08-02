@@ -21,6 +21,12 @@ public:
 
     }
 };
+
+void addUser();
+void modifyUser();
+void deleteUser();
+void displayID();
+void displayAll();
  
 int main(int argc, char* argv[])
 {
@@ -49,4 +55,66 @@ int main(int argc, char* argv[])
     char file_name[10];
     sprintf(file_name, "%s.txt", argv[1]);
     
+    //what do?
+    int n;
+
+    while(1) {
+        cout << "\nUser Modes: " << endl;
+        cout << "1. Add a Student" << endl;
+        cout << "2. Modify a Student's data" << endl;
+        cout << "3. Delete a Student's data" << endl;
+        cout << "4. Search a Student's data" << endl;
+        cout << "5. Display every student's data" << endl;
+        cout << "6. Exit" << endl;
+
+        cout << "Enter choice: ";
+        cin >> n;
+
+        //operate on these given mode numbers
+        switch(n) {
+            case 1:
+                addUser();
+                break;
+            case 2:
+                modifyUser();
+                break;
+            case 3:
+                deleteUser();
+                break;
+            case 4:
+                displayID();
+                break;
+            case 5:
+                displayAll();
+                break;
+            case 6:
+                break;
+            default:
+                cout << "Enter a valid choice!!" << endl;
+        }
+    }
+
+    return 0;
+}
+
+void addUser() {
+    //TODO: add a single students data to the file
+}
+
+void modifyUser() {
+    //TODO: modify student's complete data
+    //checkign chai roll no. le garne
+}
+
+void deleteUser() {
+    //TODO: delete a studnet's data, given: students' roll no
+}
+
+void displayID() {
+    //TODO: show the data of only one student, his/her roll no. should be mentioned by the user
+    // if not in the database, display appropriate message
+}
+
+void displayAll() {
+    //TODO: display each and every entry for that subject, in proper formatted manner
 }
