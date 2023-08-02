@@ -16,13 +16,13 @@ class Student {
 public:
     void getData() {
         cin.ignore();
-        cout << "Enter your full name: ";
+        cout << "Enter full name: ";
         cin.getline (name, 40);
         
-        cout << "Enter your roll number: ";
+        cout << "Enter roll number: ";
         cin >> roll_no ;
 
-        cout << "Enter your Faculty: ";
+        cout << "Enter Faculty: ";
         cin >> faculty;
 
         cout << "Enter Phone number:";
@@ -45,7 +45,7 @@ public:
 
     void display() {
         cout << left << setw(40) << name;
-        cout << left << setw(13) << roll_no;
+        cout << left << setw(15) << roll_no;
         cout << left << setw(15) << faculty;
         cout << left << setprecision(2) << setw(6) << marks;
         cout << left << setw(6) << grade;
@@ -136,48 +136,92 @@ void addUser(char *file_name) {
     cout << "\nEnter the Student's info: " << endl;
     s.getData();
 
-    fstream file;
-    file.open(file_name, ios::in | ios::out | ios::app);
+    ifstream ifile;
+    ofstream ofile;
+    ifile.open(file_name, ios::in | ios::binary);
+    ofile.open(file_name, ios::out | ios::app | ios::binary);
 
-    if (file.fail()) {
+    if (ifile.fail() || ofile.fail()) {
         cout << "\nError opening the give file." << endl;
     }
 
     //IF file already exists, check whether the entry with that specific username exists or not
     bool found = false;
-    file.seekg(0, ios::end);
-    int endposition = file.tellg();
+    ifile.seekg(0, ios::end);
+    int endposition = ifile.tellg();
     if (endposition != 0) {
-        file.seekg(0);
-        while(file.read((char*)&tempS, sizeof(tempS))) {
+        ifile.seekg(0);
+        while(ifile.read((char*)&tempS, sizeof(tempS))) {
             if (strcmp(tempS.getRoll(), s.getRoll()) == 0) {
                 cout << "\nThis Roll Number already exists in the DataBase!" << endl;
                 found = true; //entry with the same roll. no already exists!
-                file.close();
+                ifile.close();
+                ofile.close();
                 return;
             }
         }
     }
 
-    if (!found)
-        file.write((char*)&s, sizeof(s));
+    if (!found) {
+        ofile.seekp(0, ios::end);
+        ofile.write((char*)&s, sizeof(s));
+    }
 
-    file.close();
+    ifile.close();
+    ofile.close();
 }
 
 void modifyUser(char *file_name) {
     //TODO: modify student's complete data
     //checkign chai roll no. le garne
-}
+    Student s, tempS1, tempS2;
+    fstream file;
+    bool match = false;
+    int size = sizeof(s), pointerPosition;
+    int count = 0;
+
+    char r_no[12];
+    cout << "\nEnter the roll number to be modified: ";
+    cin >> r_no;
+
+    file.open(file_name, ios::in | ios::out | ios::ate | ios::binary);
+    file.seekg(0);
+
+    while (file.read((char*)&tempS1, sizeof(tempS1))){
+        count++;
+        if(strcmp(tempS1.getRoll(), r_no) == 0){
+
+            s.getData();
+            file.seekg(0);
+            while(file.read((char*)&tempS2, sizeof(tempS2))) {
+                if ((strcmp(s.getRoll(), tempS2.getRoll()) == 0) && (strcmp(s.getRoll(), r_no) != 0)) {
+                    cout << "\nThis Roll Number already exists in the DataBase!" << endl;
+                    cout << "Could not update the DataBase!" << endl;
+                    file.close();
+                    return;
+                }
+            }
+
+            pointerPosition = size * (count - 1);
+            file.seekp(pointerPosition, ios::beg);
+            file.write((char*)&s, sizeof(s));
+            cout << "The database record for the roll number \"" << r_no << "\" has been modified successfully. ";
+            match = true;
+            break;
+        }
+    }
+
+    if(match == false)
+        cout << "\nNo Matches were found for this roll number. ";
+
+    file.close();
+} 
 
 void deleteUser(char *file_name) {
     //fin to read the file_name.txt, fout to write the data of file_name.txt except that particular entry
     fstream fin, fout;
-    Student s;
 
-    if (fin.fail() || fout.fail()) {
-        cout << "\nError opening the give file." << endl;
-    }
+    Student s;
 
     char roll_no[13];
     //check whether the roll no. is in database or not
@@ -188,6 +232,10 @@ void deleteUser(char *file_name) {
 
     fin.open(file_name, ios::in);
     fout.open("temp.txt", ios::out);
+
+    if (fin.fail() || fout.fail()) {
+        cout << "\nError opening the give file." << endl;
+    }
 
     while(fin.read((char*)&s, sizeof(s))) {
         if (strcmp(s.getRoll(), roll_no) == 0)
@@ -219,7 +267,7 @@ void displayID(char *file_name) {
     cin >> r_no;
 
     fstream file;
-    file.open(file_name, ios::in);
+    file.open(file_name, ios::in | ios::binary);
 
     if (file.fail()) {
         cout << "\nError opening the give file." << endl;
@@ -236,7 +284,7 @@ void displayID(char *file_name) {
     }
 
     if (!match)
-        cout << "\n Record for Roll No. \"" << r_no << "\" was not found." << endl;
+        cout << "\nRecord for Roll No. \"" << r_no << "\" was not found." << endl;
 
     file.close();
 }
@@ -246,30 +294,26 @@ void displayAll(char *file_name) {
     Student s;
 
     ifstream file;
-    file.open(file_name);
+    file.open(file_name, ios::binary);
 
     if (file.fail()) {
         cout << "\nError opening the give file." << endl;
-    }
-
-    file.seekg(0, ios::end);
-    if (file.tellg() == 0) {
-        cout << "\nThe DataBase is currently empty." << endl;
-        return;
+        cout << "The file is probably not created. Please add some data first" << endl;
     }
 
     //Header
     cout << left << setw(40) << "Name";
-    cout << left << setw(13) << "Roll No.";
+    cout << left << setw(15) << "Roll No.";
     cout << left << setw(15) << "Faculty";
     cout << left << setprecision(2) << setw(6) << "Marks";
     cout << left << setw(6) << "Grade";
     cout << left << setw(12) << "Phone No." << endl;
 
-    file.seekg(0);
-    while(file.eof() != 0) {
-        file.read((char*)&s, sizeof(s));
+    while (!file.eof()){
+    file.read((char*)&s, sizeof(s));
+    if (!file.eof()) {  // Check if the end of file is reached
         s.display();
+    }
     }
 
     file.close();
