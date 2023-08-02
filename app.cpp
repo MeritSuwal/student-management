@@ -116,7 +116,6 @@ int main(int argc, char* argv[])
 }
 
 void addUser(char *file_name) {
-    //TODO: add a single students data to the file
     Student s, tempS;
     
     cout << "\nEnter the Student's info: " << endl;
@@ -125,17 +124,26 @@ void addUser(char *file_name) {
     fstream file;
     file.open(file_name, ios::in | ios::out | ios::app);
 
-    int endposition = file.tellp();
+    //IF file already exists, check whether the entry with that specific username exists or not
+    bool found = false;
+    file.seekg(0, ios::end);
+    int endposition = file.tellg();
     if (endposition != 0) {
+        file.seekg(0);
         while(file.read((char*)&tempS, sizeof(tempS))) {
             if (strcmp(tempS.getRoll(), s.getRoll()) == 0) {
                 cout << "This Roll Number already exists in the DataBase!" << endl;
+                found = true; //entry with the same roll. no already exists!
+                file.close();
                 return;
             }
         }
     }
 
-    file.write((char*)&s, sizeof(s));
+    if (!found)
+        file.write((char*)&s, sizeof(s));
+
+    file.close();
 }
 
 void modifyUser(char *file_name) {
