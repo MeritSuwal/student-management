@@ -44,5 +44,9 @@ int main(int argc, char* argv[])
         cout << "OOP, DL, TOC, ECT, MATHS, EDC, EM are the valid subjects!" << endl;
         return 2; //invalid subject argument
     }
+
+    //file name:
+    char file_name[10];
+    sprintf(file_name, "%s.txt", argv[1]);
     
 }
