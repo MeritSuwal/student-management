@@ -177,7 +177,7 @@ void modifyUser(char *file_name) {
     Student s, tempS1, tempS2;
     fstream file;
     bool match = false;
-    int size = sizeof(s), pointerPosition;
+    int pointerPosition;
     int count = 0;
 
     char r_no[12];
@@ -190,7 +190,7 @@ void modifyUser(char *file_name) {
     while (file.read((char*)&tempS1, sizeof(tempS1))){
         count++;
         if(strcmp(tempS1.getRoll(), r_no) == 0){
-
+            
             s.getData();
             file.seekg(0);
             while(file.read((char*)&tempS2, sizeof(tempS2))) {
@@ -202,10 +202,12 @@ void modifyUser(char *file_name) {
                 }
             }
 
-            pointerPosition = size * (count - 1);
+            cout << "SIzeof s: " << sizeof(s) << " Count: " << count << endl;
+            pointerPosition = sizeof(s) * (count - 1);
+            //cout << "pointerposition: " << pointerPosition << endl;
             file.seekp(pointerPosition, ios::beg);
             file.write((char*)&s, sizeof(s));
-            cout << "The database record for the roll number \"" << r_no << "\" has been modified successfully. ";
+            cout << "\nThe database record for the roll number \"" << r_no << "\" has been modified successfully. " << endl;
             match = true;
             break;
         }
@@ -230,14 +232,15 @@ void deleteUser(char *file_name) {
     cout << "\nEnter the Roll.No. whose entry is to be deleted: " << endl;
     cin >> roll_no;
 
-    fin.open(file_name, ios::in);
-    fout.open("temp.txt", ios::out);
+    fin.open(file_name, ios::in | ios::binary);
+    fout.open("temp.txt", ios::out | ios::binary);
 
     if (fin.fail() || fout.fail()) {
         cout << "\nError opening the give file." << endl;
     }
 
-    while(fin.read((char*)&s, sizeof(s))) {
+    while(!fin.eof()) {
+        fin.read((char*)&s, sizeof(s));
         if (strcmp(s.getRoll(), roll_no) == 0)
             //the entry exists and we dont fout.write for this s object
             flag = true;
@@ -277,6 +280,15 @@ void displayID(char *file_name) {
         file.read((char*)&s, sizeof(s));
         if (strcmp(s.getRoll(), r_no) == 0){
             cout << "\nRECORD FOUND!\n";
+
+            //Header
+            cout << left << setw(40) << "Name";
+            cout << left << setw(15) << "Roll No.";
+            cout << left << setw(15) << "Faculty";
+            cout << left << setprecision(2) << setw(6) << "Marks";
+            cout << left << setw(6) << "Grade";
+            cout << left << setw(12) << "Phone No." << endl;
+
             s.display();
             match = true;
             break;
@@ -301,6 +313,14 @@ void displayAll(char *file_name) {
         cout << "The file is probably not created. Please add some data first" << endl;
     }
 
+    //moving the cursor pointer to the end to check whether there are file contents or not
+    file.seekg(0, ios::end);
+    if (file.tellg() == 0) {
+        cout << "File is emptpy. Try adding some data first!" << endl;
+        file.close();
+        return;
+    }
+
     //Header
     cout << left << setw(40) << "Name";
     cout << left << setw(15) << "Roll No.";
@@ -309,6 +329,8 @@ void displayAll(char *file_name) {
     cout << left << setw(6) << "Grade";
     cout << left << setw(12) << "Phone No." << endl;
 
+    //moving back the cursor pointer to the beginning of the file
+    file.seekg(0, ios::beg);
     while (!file.eof()){
     file.read((char*)&s, sizeof(s));
     if (!file.eof()) {  // Check if the end of file is reached
