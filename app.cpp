@@ -88,7 +88,8 @@ int main(int argc, char* argv[])
 
     //file name:
     char file_name[10];
-    sprintf(file_name, "%s.txt", argv[1]);
+    //note: there must be Database folder already created inside the current folder
+    sprintf(file_name, "./Database/%s.txt", argv[1]);
     
     //what do?
     int n;
@@ -233,7 +234,7 @@ void deleteUser(char *file_name) {
     cin >> roll_no;
 
     fin.open(file_name, ios::in | ios::binary);
-    fout.open("temp.txt", ios::out | ios::binary);
+    fout.open("./Database/temp.txt", ios::out | ios::binary);
 
     if (fin.fail() || fout.fail()) {
         cout << "\nError opening the give file." << endl;
@@ -257,7 +258,7 @@ void deleteUser(char *file_name) {
     fin.close();
 
     remove(file_name);
-    rename("temp.txt", file_name);
+    rename("./Database/temp.txt", file_name);
 }
 
 void displayID(char *file_name) {
@@ -316,7 +317,7 @@ void displayAll(char *file_name) {
     //moving the cursor pointer to the end to check whether there are file contents or not
     file.seekg(0, ios::end);
     if (file.tellg() == 0) {
-        cout << "File is emptpy. Try adding some data first!" << endl;
+        cout << "\nFile is emptpy. Try adding some data first!" << endl;
         file.close();
         return;
     }
