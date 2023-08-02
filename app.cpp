@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include <stdio.h>
 #include <string.h>
  
 using namespace std;
@@ -41,14 +40,15 @@ int main()
 {
     int course_num=2;
     int *arr = new int[course_num];
-
+    string name;
     cout << "Enter:";
+    cin >>name;
 
     for (int i = 0; i<course_num; i++){
         cin >> arr[i];
     }
 
-    Student s1 ("AAABID TOPPER", "67", 99, 90990, arr, course_num);
+    Student s1 (name, "67", 99, 90990, arr, course_num);
     s1.disp();
 
     delete[] arr;
