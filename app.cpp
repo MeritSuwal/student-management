@@ -22,11 +22,11 @@ public:
     }
 };
 
-void addUser();
-void modifyUser();
-void deleteUser();
-void displayID();
-void displayAll();
+void addUser(char *file_name);
+void modifyUser(char *file_name);
+void deleteUser(char *file_name);
+void displayID(char *file_name);
+void displayAll(char *file_name);
  
 int main(int argc, char* argv[])
 {
@@ -73,48 +73,53 @@ int main(int argc, char* argv[])
         //operate on these given mode numbers
         switch(n) {
             case 1:
-                addUser();
+                addUser(file_name);
                 break;
             case 2:
-                modifyUser();
+                modifyUser(file_name);
                 break;
             case 3:
-                deleteUser();
+                deleteUser(file_name);
                 break;
             case 4:
-                displayID();
+                displayID(file_name);
                 break;
             case 5:
-                displayAll();
+                displayAll(file_name);
                 break;
             case 6:
-                break;
+                return 0;
             default:
                 cout << "Enter a valid choice!!" << endl;
         }
     }
-
-    return 0;
 }
 
-void addUser() {
+void addUser(char *file_name) {
     //TODO: add a single students data to the file
+    Student s;
+    
+    cout << "\nEnter the Student's info: " << endl;
+    s.getData();
+
+    ofstream file;
+    file.open(file_name);
 }
 
-void modifyUser() {
+void modifyUser(char *file_name) {
     //TODO: modify student's complete data
     //checkign chai roll no. le garne
 }
 
-void deleteUser() {
+void deleteUser(char *file_name) {
     //TODO: delete a studnet's data, given: students' roll no
 }
 
-void displayID() {
+void displayID(char *file_name) {
     //TODO: show the data of only one student, his/her roll no. should be mentioned by the user
     // if not in the database, display appropriate message
 }
 
-void displayAll() {
+void displayAll(char *file_name) {
     //TODO: display each and every entry for that subject, in proper formatted manner
 }
