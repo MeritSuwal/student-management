@@ -156,8 +156,30 @@ void deleteUser(char *file_name) {
 }
 
 void displayID(char *file_name) {
-    //TODO: show the data of only one student, his/her roll no. should be mentioned by the user
-    // if not in the database, display appropriate message
+    Student s;
+    bool match = false;
+    char r_no[12];
+
+    cout << "Enter student's roll no: ";
+    cin >> r_no;
+
+    fstream file;
+    file.open(file_name, ios::in);
+
+    while (!file.eof()){
+        file.read((char*)&s, sizeof(s));
+        if (strcmp(s.getRoll(), r_no) == 0){
+            cout << "RECORD FOUND!\n";
+            s.display();
+            match = true;
+            break;
+        }
+    }
+
+    if (!match)
+        cout << "\n Record for " << r_no << "was not found." << endl;
+
+    file.close();
 }
 
 void displayAll(char *file_name) {
