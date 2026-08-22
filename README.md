@@ -1,2 +1,2 @@
-# student-management
-AABID POG
+# simple student-management in C++
+
